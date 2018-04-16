@@ -1,0 +1,20 @@
+{
+	"name": "rediris-es/simplesamlphp-module-idpinstaller",
+	"description": "A SimpleSAMLphp module for pre-installing an IdP.",
+	"type": "simplesamlphp-module",
+    	"license": "Apache-2.0",	
+	"keywords": [ "simplesamlphp", "RedIRIS", "SIR", "IdP", "installer" ],
+	"authors": [
+	{
+		"name": "PRiSE [Auditoria y Consultoria de privacidad y Seguridad, S.L.]",
+		"email": "info@prise.es"
+	},
+	{
+		"name": "José Manuel Macías",
+		"email": "jmanuel.macias@rediris.es"
+	}	
+	],
+    	"require": {
+        	"simplesamlphp/composer-module-installer": "~1.0"
+    	}
+}

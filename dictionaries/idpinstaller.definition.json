@@ -1,0 +1,323 @@
+{
+    "idpinstaller_header": {
+        "es": "Instalador del IdP de referencia de SIR2"
+    },
+    "step_subtitle1": {
+        "es": "Paso "
+    },
+    "step_subtitle2": {
+        "es": "de 4"
+    },
+    "step1_h3":{
+        "es": "Paso 1 de 7: Preparación del sistema"
+    },
+    "step2_h3":{
+        "es": "Paso 2 de 7: Configuración básica del sistema"
+    },
+    "step3_h3":{
+        "es": "Paso 2 de 7: Configuración básica del sistema"
+    },
+    "step4_h3":{
+        "es": "Paso 2 de 7: Configuración básica del sistema"
+    },
+    "step5_h3":{
+        "es": "Paso 3 de 7: Configuración de fuente de datos"
+    },
+    "step6_h3":{
+        "es": "Paso 4 de 7: Creación de certificados del IdP"
+    },
+    "step7_h3":{
+        "es":"Paso 5 de 7: Configuración del protocolo SAML 2.0"
+    },
+    "step8_h3":{
+        "es":"Paso 6 de 7: Añadiendo metadatos de SIR2"
+    },
+    "step9_h3":{
+        "es":"Paso 7 de 7: Fin de la configuración"
+    },
+    "step_error_h3":{
+        "es":"Error: "
+    },
+    "next_step": {
+        "es": "Siguiente"
+    },
+    "general_error": {
+        "es": "Error al instalar la conexión con la federación SIR2."
+    },
+    "step1_error_version": {
+        "es": "La versión de PHP deberá ser mayor a igual a 5.3.0."
+    },
+    "step1_error_extensions": {
+        "es": "Es necesario que instale las siguientes extensiones PHP: "
+    },
+    "step1_memcached_error": {
+        "es": "Recuerde que si va a desplegar este IdP en entornos balanceados, deberá instalar la extensión <i>memcached</i> de PHP."
+    },
+    "step1_only_ldap": {
+        "es": "Solo tiene instalado el módulo LDAP por lo que podrá conectar únicamente el IdP a este tipo de fuente de datos."
+    },
+    "step1_only_pdo": {
+        "es": "Solo tiene instalado la extensión PHP PDO como fuente de datos, por lo que podrá conectar únicamente el IdP a este tipo de fuente de datos."
+    },
+    "step1_only_pdo_modules_list": {
+        "es": "Las extensiones de PDO que tiene instaladas son: "
+    },
+    "step1_pdo_no_modules": {
+        "es": "Tiene instalado la extensión PHP PDO en el sistema, pero no tiene ningún módulo específico (pdo_mysql, pdo_oci, etc.). Instale el módulo que vaya a requerir según su fuente de datos."
+    },
+    "step1_any_data_source_error": {
+        "es": "Es necesario que tenga alguna extensión para conectar su IdP a una fuente de datos. Instale las extensiones LDAP y PDO correspondientes."
+    },
+    "step1_all_ok": {
+        "es": "Su sistema tiene todos los requisitos necesarios para continuar con la instalación."
+    },
+    "step1_perms_ko": {
+        "es": "Los permisos de los siguientes archivos o directorios no son correctos: "
+    },
+    "step1_perms_ko2": {
+        "es": "Para poder continuar con la instalación deberá cambiar los permisos de estos archivos o directorios para permitir la escritura del grupo de apache correspondiente."
+    },
+    "step1_perms_ko3": {
+        "es": "Para ello puede ejecutar los siguientes comandos:"
+    },
+    "step1_remember_change_perms": {
+        "es": "Para evitar problema de seguridad, recuerde que deberá reestablecer los permisos una vez terminado el proceso de instalación. "
+    },
+    "step1_title": {
+        "es": "Comprobación de requisitos del sistema"
+    },
+    "try_again_button": {
+        "es": "Reintentar"
+    },
+    "try_again_button_step_n": {
+        "es": "Reintentar paso"
+    },
+    "step2_access_title": {
+        "es": "2.1 Datos de acceso a SimpleSAMLphp"
+    },
+    "step2_access_password": {
+        "es": "Introduzca la contraseña de la herramienta de administración de SimpleSAMLphp:"
+    },
+    "step2_access_password2": {
+        "es": "Introduzca de nuevo su contraseña:"
+    },
+    "step2_contact_title": {
+        "es": "2.2 Datos del contacto técnico de la organización"
+    },
+    "step2_organization_title": {
+        "es": "2.3 Datos de la organización"
+    },
+    "step2_organization_name": {
+        "es": "Nombre de la organización"
+    },
+    "step2_organization_description": {
+        "es": "Breve descripción de la organización"
+    },
+    "step2_organization_info_url": {
+        "es": "URL a la página de información de la organización"
+    },
+    "step2_contact_email": {
+        "es": "Correo electrónico"
+    },
+    "step2_contact_name": {
+        "es": "Nombre y apellidos del contacto técnico de la organización"
+    },
+    "step2_contact_info": {
+        "es": "Recuerde que esta información estará disponible en los metadatos de esta organización.<br/> El correo electrónico se utilizará para remitir errores de SimpleSAMLphp de forma automática."
+    },
+    "step2_timezone_info": {
+        "es": "Se ha obtenido la zona horaria configurada por defecto para PHP. Ésta es:"
+    },
+    "step2_timezone_info2": {
+        "es": "Sólo si considera que esta zona horaria no es correcta, modifiquela en su configuración de PHP y reintente de nuevo este paso. Si es correcta puede continuar con el siguiente paso."
+    },
+    "step2_password_ko_error": {
+        "es": "Debe introducir una contraseña válida."
+    },
+    "step2_passwords_error": {
+        "es": "Las contraseñas introducidas deben coincidir."
+    },
+    "step2_contact_info_error": {
+        "es": "Debe introducir unos datos de contacto válidos."
+    },
+    "step2_contact_save_error": {
+        "es": "Ocurrió un error al modificar la configuración. Inténtelo de nuevo en unos instantes."
+    },
+    "step2_contact_save_error2": {
+        "es": "El error puede deberse a un problema de permisos. Compruebe que los permisos son adecuados para el archivo "
+    },
+    "step5_datasource_select":{
+        "es": "Seleccione el tipo de fuente de datos que va a utilizar como origen de la información de los usuarios: "
+    },
+    "step4_error": {
+        "es": "Se ha detectado que su SimpleSAMLphp no tiene disponible los módulos requeridos. </br>Pongase en contacto con RedIRIS para solventar el problema."
+    },
+    "step4_perms_ko": {
+        "es": "No se ha podido continuar con el proceso de instalación, debido a unos permisos inadecuados. </br>Puede ejecutar los siguientes comandos para solucionar el problema:"
+    },
+    "step5_no": {
+        "es": "No"
+    },
+    "step5_yes": {
+        "es": "Sí"
+    },
+    "step5_ldap_anonymous_bind": {
+        "es": "Realizar bind anónimo"
+    },    
+    "step5_anonbind_no": {
+        "es": "No"
+    },
+    "step5_anonbind_yes": {
+        "es": "Sí"
+    },    
+    "step5_ldap_binddn": {
+        "es": "Bind DN"
+    },    
+    "step5_ldap_bindpassword": {
+        "es": "Password para hacer bind"
+    },        
+    "step5_ldap_hostname": {
+        "es": "Nombre de host del servidor LDAP"
+    },
+    "step5_ldap_port": {
+        "es": "Número de puerto del servidor LDAP"
+    },    
+    "step5_ldap_enable": {
+        "es": "Activar TLS para la conexión con LDAP"
+    },
+    "step5_ldap_referral": {
+        "es": "Activar el seguimiento de referrals. Los controladores de dominio de Active Directory pueden requerir su desactivación para functionar correctamente"
+    },
+    "step5_ldap_timeout": {
+        "es": "Timeout de acceso al LDAP, en segundos"
+    },
+    "step5_ldap_info": {
+        "es": "Esta configuración permitirá la conexión del IdP a la fuente de datos, pero no incluye la configuración de obtención de la información de la misma. Para configurar esta, se deberá seguir la documentación oficial de SimpleSAMLphp."
+    },
+    "step5_ldap_title":{
+        "es":"Configuración de fuente de datos de tipo LDAP"
+    },
+    "step5_pdo_title":{
+        "es":"Configuración de fuente de datos de tipo PDO"
+    },
+    "step5_pdo_dsn":{
+        "es":"DSN de conexión a la base de datos"
+    },
+    "step5_pdo_username":{
+        "es":"Nombre de usuario"
+    },
+    "step5_pdo_password":{
+        "es":"Contraseña"
+    },    
+    "step5_datasource_request_error":{
+        "es":"La fuente de datos utilizada debe ser compatible con las extensiones desplegadas en el sistema."
+    },
+    "step5_datasource_error":{
+        "es":"Los datos de conexión no son correctos."
+    },
+    "step5_ldap_example":{
+        "es":"Ej. ‘ldap.example.com’"
+    },
+    "step5_ldap_port_example":{
+        "es":"Ej. ‘389’"
+    },    
+    "step5_ldap_binddn_example":{
+        "es":"Ej. ‘cn=admin,dc=example,dc=com’"
+    },    
+    "step5_ldap_bindpassword_example":{
+        "es":"Contraseña para el usuario con el que se hace bind"
+    },        
+    "step5_pdo_example":{
+        "es":"Ej. ‘mysql:host=localhost;port=3306;dbname=my_database;unix_socket=/opt/local/var/mysql/mysqld.sock’"
+    },
+    "step6_cert_select":{
+        "es": "Seleccione si desea crear un nuevo certificado, o si por otra parte, prefiere importar uno ya existente: "
+    },
+    "step7_all_ok":{
+        "es":"Se ha configurado los metadatos para que su SimpleSAMLphp funcione como IdP <strong>de manera satisfactoria</strong>. Recuerde que <strong>debe enviar al operador de la federación SIR2</Strong> los metadatos de su IdP."
+    },
+    "step7_all_info_extra":{
+        "es":"Si desea comprobar cuales han sido los nuevos metadatos creados, puede comprobarlos "
+    },
+    "step7_here":{
+        "es":"aquí."
+    },
+    "step7_error":{
+        "es":"Se ha intentado configurar los metadatos para que su SimpleSAMLphp funcione como IdP, <strong>pero NO ha sido posible</strong>."
+    },
+    "step7_command_error":{
+        "es":"Se produjo un error al generar el certificado: "
+    },
+    "step6_cert_info":{
+        "es": "Para la creación automática de los certificados del IdP es necesario que introduzca el nombre de su organización: "
+    },
+    "step6_org_name_empty_error":{
+         "es": "Debe introducir un nombre de organización o un certificado y clave correctos."
+    },
+    "step6_mkdir_cert_error":{
+        "es":"Deberá crear el directorio <i>cert</i> en el que se almacenará el certificado generado. Para ello puede ejecutar el siguiente comando: "
+    },
+    "step6_perm_cert_error":{
+        "es":"Debe modificar los permisos de escritura del directorio <i>cert</i> en el que se almacenará el certificado generado. Para ello puede ejecutar los siguientes comandos: "
+    },
+    "step6_cert_error":{
+        "es":"Ocurrió un error al generar los archivos. Genere manualmente los certificados y reintente este paso a continuación."
+    },
+    "step6_cert_error_suggest":{
+        "es":"Para ello puede ejecutar el siguiente comando: "
+    },
+    "step6_cert_error_comparation":{
+        "es":"Su certificado no concuerda con su clave privada, asegurese que ambas son correctas. "
+    },
+    "step6_cert_info2":{
+        "es":"Si ya tiene una certificado y una clave privada que desee utilizar para este IdP, introduzcalos a continuación:"
+    },
+    "step6_cert_rsa_error":{
+        "es":"El certificado y la clave introducidos no son correctos. Debe introducir un certificado y clave de tipo RSA."
+    },
+    "step6_create_title":{
+        "es":"Creación del certificado"
+    },
+    "step6_import_title":{
+        "es":"Importar certificado"
+    },
+    "step6_footer_note":{
+        "es":"<strong> Nota:</strong> Los certificados creados se guardarán en "
+    },
+    "step8_all_ok":{
+        "es":"Se han añadido los metadatos correspondientes al SIR2 <strong>de manera satisfactoria</strong>."
+    },
+    "step8_error":{
+        "es":"Se ha intentado añadir los metadatos correspondientes a la federación SIR2, <strong>pero NO ha sido posible</strong>."
+    },
+    "step8_curl_error":{
+        "es":"Se ha producido un error obteniendo los metadatos de SIR2, por favor compruebe que su accesibilidad a ellos es la correcta. El mensaje de error es el siguiente: "
+    },
+    "step8_curl_error2":{
+        "es":"Se ha producido un error obteniendo los metadatos del SIR2, los metadatos obtenidos no son los correctos. Pongase en contacto con el administrador."
+    },
+    "step9_all_ok":{
+        "es":"Lista de pasos a seguir: "
+    },
+    "step9_change_perms":{
+        "es":"Se recomienda ejecutar los siguientes comandos por seguridad:"
+    },
+    "step9_finished":{
+        "es":"<strong>¡Enhorabuena!</strong>, ha completado la configuración de su SimpleSAMLphp para que funcione con SIR2."
+    },
+    "step9_remember":{
+        "es":"Se recomienda que a continuación, se sigan los pasos indicados en la Guía de Instalación y Configuración del IdP de Referencia."
+    },
+    "step9_remember_cert":{
+        "es":"El certificado para este IdP se encuentra en "
+    },
+    "step9_pub_key":{
+        "es":"El contenido del certificado es: "
+    },
+    "step9_modified_files":{
+        "es":"Los ficheros modificados en el proceso de instalación han sido: "
+    },
+    "step9_url_init":{
+        "es":"Si desea acceder a la página principal del recién instalado SimpleSAMLphp, puede hacerlo "
+    }
+}

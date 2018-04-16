@@ -1,0 +1,12 @@
+{
+	"idpinstaller_header": {
+		"en": "Installation tool to connect with SIR"
+	},
+	"step_subtitle1": {
+		"en": "Step "
+	},
+        "step_subtitle2": {
+		"en": "of 5 (Change this nº in idpinstaller.translation.json)"
+	}
+
+}
