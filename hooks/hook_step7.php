@@ -134,7 +134,59 @@ function idpinstaller_hook_step7(&$data) {
         $config['metadata.sign.privatekey'] = $pkey_file;
         $config['metadata.sign.privatekey_pass'] = NULL;
         $config['metadata.sign.certificate'] = $cert_file;
+        //antinua forma de hacerlo
+        /*$res = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");*/
+
+        //nueva forma de hacerlo
+        //Para dudas sobre el código: daniel.adanza@externos.rediris.com
+        //Hecho en Abril / 2018
+        //Primero de todo abrimos el fichero y para ello empleamos las funciones correspondientes
+        $file = "/../../../config-templates/config.php";
+        $fopen = fopen($file, r);
+        $fread = fread($fopen,filesize($file));
+        fclose($fopen);
+
+        //a continuación dividiremos el fichero en líneas
+        $remove = "\n";
+        $split = explode($remove, $fread);
+
+        //declaramos también otras variables útiles para el recorrido del contenido del fichero
+        $tab = "\t";
+        $fileContent = "";
+
+        //una vez dividido pasamos a recorrerlo
+        foreach ($split as $string)
+        {
+            $matched = false;
+
+            //HACER UN IF QUE COMPRUEBE SI ES O NO UN COMENTARIO
+
+                //ahora vamos a recorrer cada uno de los elementos que contiene el array config
+                foreach ($config as $clave => $valor)
+                {
+                     //por cada elemento del config vamos a ver si coincide o si contiene la cadena que estamos buscando
+                     if (strpos(htmlspecialchars($string), $clave) !== false) 
+                     {
+                        //de ser así indicamos a ciertas variables y ponemos una marca por pantalla para que se vea que la hemos encontrado
+                        $matched = true;
+                        //además también eliminaremos este elemento del array para que no se vuelva a repetir
+                        unset($config[$clave]);
+                        $fileContent .= "{$clave} => {$valor} </br>";
+
+                     }
+                }
+
+            //si no se ha encontrado ninguna coincidencia entonces se copia el contenido del fichero tal cual
+            if ($matched === false)
+            {
+                $fileContent .= $string . "</br>";
+            }
+           
+        }
+
+        //CREAR ALGÚN FICHERO CON PHP DE ALGUNA FORMA
         $res = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
+
         if (!$res) {
             $data['errors'][] = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
             $data['errors'][] = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error2}') . " <i>" . realpath($filename) . "</i>";
