@@ -137,7 +137,9 @@ function idpinstaller_hook_step7(&$data) {
         //antinua forma de hacerlo
         /*$res = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");*/
 
+        ////////////////////////////////////////////////////////////////
         //nueva forma de hacerlo
+        ////////////////////////////////////////////////////////////////
         //Para dudas sobre el código: daniel.adanza@externos.rediris.com
         //Hecho en Abril / 2018
         //Primero de todo abrimos el fichero y para ello empleamos las funciones correspondientes
@@ -153,16 +155,47 @@ function idpinstaller_hook_step7(&$data) {
         //declaramos también otras variables útiles para el recorrido del contenido del fichero
         $tab = "\t";
         $fileContent = "";
+        $isCommentLong = false;
+        $configAux = $config;
 
         //una vez dividido pasamos a recorrerlo
         foreach ($split as $string)
         {
             $matched = false;
 
-            //HACER UN IF QUE COMPRUEBE SI ES O NO UN COMENTARIO
+            //Primero de todo. miramos si la linea es un comentario o no
+            $isComment = false;
+            //primero le quitamos los espacios en blanco
+            $stringAux = str_replace(' ', '', $string);
 
+            if ($stringAux[0] == '/')
+            {
+                //si empieza por /* entonces es un comentario de varias lineas
+                if ( $stringAux[1] == '*')
+                {
+                    $isComment = true;
+                    $isCommentLong = true;
+                }
+                //si empieza por //entonces es un comentario de una linea
+                if ($stringAux[1] == '/')
+                {
+                    $isComment = true;
+                }
+            }
+            if ($stringAux[0] == '*')
+            {
+                if ($stringAux[1] == '/')
+                {
+                    $isComment = true;
+                    $isCommentLong = false;
+                }
+            }
+
+            //si no es un comentario, entonces procedemos a comparar
+            if ($isComment == false && $isCommentLong == false)
+            {
                 //ahora vamos a recorrer cada uno de los elementos que contiene el array config
-                foreach ($config as $clave => $valor)
+                foreach ($configAux as $clave => $valor)
                 {
                      //por cada elemento del config vamos a ver si coincide o si contiene la cadena que estamos buscando
                      if (strpos(htmlspecialchars($string), $clave) !== false) 
@@ -170,22 +203,27 @@ function idpinstaller_hook_step7(&$data) {
                         //de ser así indicamos a ciertas variables y ponemos una marca por pantalla para que se vea que la hemos encontrado
                         $matched = true;
                         //además también eliminaremos este elemento del array para que no se vuelva a repetir
-                        unset($config[$clave]);
-                        $fileContent .= "{$clave} => {$valor} </br>";
+                        unset($configAux[$clave]);
+                        $fileContent .= "'{$clave}' => {$valor} \n";
 
                      }
                 }
+            }
 
             //si no se ha encontrado ninguna coincidencia entonces se copia el contenido del fichero tal cual
             if ($matched === false)
             {
-                $fileContent .= $string . "</br>";
+                $fileContent .= $string . "\n";
             }
            
         }
 
-        //CREAR ALGÚN FICHERO CON PHP DE ALGUNA FORMA
-        $res = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
+        //Creamos el fichero php correspondiente
+        $res = @file_put_contents($filename, $fileContent);
+
+        ////////////////////////////////////////////////////////////////
+        //  Fin del nuevo código
+        ////////////////////////////////////////////////////////////////
 
         if (!$res) {
             $data['errors'][] = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
