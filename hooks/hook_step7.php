@@ -143,8 +143,8 @@ function idpinstaller_hook_step7(&$data) {
         //Para dudas sobre el código: daniel.adanza@externos.rediris.com
         //Hecho en Abril / 2018
         //Primero de todo abrimos el fichero y para ello empleamos las funciones correspondientes
-        $file = "/../../../config-templates/config.php";
-        $fopen = fopen($file, r);
+        $file = __DIR__ . '/../../../config-templates/config.php';
+        $fopen = fopen($file, 'r');
         $fread = fread($fopen,filesize($file));
         fclose($fopen);
 
@@ -204,7 +204,7 @@ function idpinstaller_hook_step7(&$data) {
                         $matched = true;
                         //además también eliminaremos este elemento del array para que no se vuelva a repetir
                         unset($configAux[$clave]);
-                        $fileContent .= "'{$clave}' => {$valor} \n";
+                        $fileContent .= "==>'{$clave}' => {$valor} \n";
 
                      }
                 }
