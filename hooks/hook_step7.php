@@ -209,7 +209,7 @@ function idpinstaller_hook_step7(&$data) {
                         //en el caso de que sea un string añadiremos comillas simples al rededor del fichero
                         if ( gettype($valor) == 'string' )
                         {
-                            $fileContent .= "==>'{$clave}' => '{$valor}', \n";
+                            $fileContent .= "'{$clave}' => '{$valor}', \n";
                         }
                         //en el caso de que tengamos un dato boleano, el propio php mostrará un 0 si el valor es falso
                         //y cualquier otro número en el caso de que el valor sea verdadero
@@ -217,17 +217,17 @@ function idpinstaller_hook_step7(&$data) {
                         {
                             if ($valor == 0)
                             {
-                                $fileContent .= "-------'{$clave}' => FALSE, \n";
+                                $fileContent .= "'{$clave}' => FALSE, \n";
                             }
                             else
                             {
-                                $fileContent .= "-------'{$clave}' => TRUE, \n";
+                                $fileContent .= "'{$clave}' => TRUE, \n";
                             }
                         }
                         //finalmente si el tipo de dato es NULL no mostrará nada. Por lo que será necesario incluir tambien el valor null
                         else if ( gettype($valor) == 'NULL' )
                         {
-                                $fileContent .= "-------'{$clave}' => NULL, \n";
+                                $fileContent .= "'{$clave}' => NULL, \n";
                         }
 
                      }
