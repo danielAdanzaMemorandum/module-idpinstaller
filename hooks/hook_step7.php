@@ -153,7 +153,6 @@ function idpinstaller_hook_step7(&$data) {
         $split = explode($remove, $fread);
 
         //declaramos también otras variables útiles para el recorrido del contenido del fichero
-        $tab = "\t";
         $fileContent = "";
         $isCommentLong = false;
         $configAux = $config;
@@ -168,23 +167,24 @@ function idpinstaller_hook_step7(&$data) {
             //primero le quitamos los espacios en blanco
             $stringAux = str_replace(' ', '', $string);
 
-            if ($stringAux[0] == '/')
+            if (substr($stringAux,0,1) == '/')
             {
                 //si empieza por /* entonces es un comentario de varias lineas
-                if ( $stringAux[1] == '*')
+
+                if ( substr($stringAux,1,1) == '*')
                 {
                     $isComment = true;
                     $isCommentLong = true;
                 }
                 //si empieza por //entonces es un comentario de una linea
-                if ($stringAux[1] == '/')
+                if (substr($stringAux,1,1) == '/')
                 {
                     $isComment = true;
                 }
             }
-            if ($stringAux[0] == '*')
+            if (substr($stringAux,0,1) == '*')
             {
-                if ($stringAux[1] == '/')
+                if (substr($stringAux,1,1) == '/')
                 {
                     $isComment = true;
                     $isCommentLong = false;
@@ -198,16 +198,35 @@ function idpinstaller_hook_step7(&$data) {
                 foreach ($configAux as $clave => $valor)
                 {
                      //por cada elemento del config vamos a ver si coincide o si contiene la cadena que estamos buscando
-                     if (strpos(htmlspecialchars($string), $clave) !== false) 
+                     if (strpos($string, $clave) !== false) 
                      {
                         //de ser así indicamos a ciertas variables y ponemos una marca por pantalla para que se vea que la hemos encontrado
                         $matched = true;
-                        //además también eliminaremos este elemento del array para que no se vuelva a repetir
-                        unset($configAux[$clave]);
-                        
+
+                        //si contiene un array hay un ligero problemilla con el parseo de los datos 
+                        //por lo que los trataremos de manera diferente
+                        if (strpos($string,"array(") !== false)
+                        {
+                            //para que no de ningún error de sintaxis en el fichero config de momento
+                            //simplemente no lo sobrescribo y ya está. Al mismo tiempo expongo la estructura de los pasos a seguir
+                            $fileContent .= $string . "\n";
+
+                            //primero comprobamos que el valor que tenemos nosotros en array config es efectivamente un array
+                            //y que la longitud del array es mayor que cero
+                            //de no ser así. Habría que insertar un array vacío
+                            if (!is_array($valor) || sizeof ($valor))
+                            {
+                                //aquí habría que insertar el array vacío y eliminar la línea o líneas del contenido del fichero que había anteriormente
+                            }
+                            else
+                            {
+                                //Aquí habría que insertar cada uno de los elementos y eliminar todas las líneas correspondientes
+                                //al contenido del array que no sean comentarios
+                            }
+                        }
                         //una vez que hemos obtenido los datos vamos a procesarlos de manera correcta
                         //en el caso de que sea un string añadiremos comillas simples al rededor del fichero
-                        if ( gettype($valor) == 'string' )
+                        else if ( gettype($valor) == 'string' )
                         {
                             $fileContent .= "'{$clave}' => '{$valor}', \n";
                         }
@@ -229,6 +248,13 @@ function idpinstaller_hook_step7(&$data) {
                         {
                                 $fileContent .= "'{$clave}' => NULL, \n";
                         }
+                        else
+                        {
+                            $fileContent .= "/*ERROR => " . $string . "*/";
+                        }
+
+                        //además también eliminaremos este elemento del array para que no se vuelva a repetir
+                        unset($configAux[$clave]);
 
                      }
                 }
