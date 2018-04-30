@@ -136,7 +136,7 @@ function idpinstaller_hook_step7(&$data) {
         $config['metadata.sign.certificate'] = $cert_file;
         //antinua forma de hacerlo
         /*$res = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");*/
-
+    
         ////////////////////////////////////////////////////////////////
         //nueva forma de hacerlo
         ////////////////////////////////////////////////////////////////
@@ -155,6 +155,7 @@ function idpinstaller_hook_step7(&$data) {
         //declaramos también otras variables útiles para el recorrido del contenido del fichero
         $fileContent = "";
         $isCommentLong = false;
+    $isArrayLong = 0;
         $configAux = $config;
 
         //una vez dividido pasamos a recorrerlo
@@ -194,6 +195,23 @@ function idpinstaller_hook_step7(&$data) {
             //si no es un comentario, entonces procedemos a comparar
             if ($isComment == false && $isCommentLong == false)
             {
+
+        //aquí vamos a comprobar si se cierra el array o si hay algún array anidado
+        if ($isArrayLong > 0)
+        {
+            if (strpos($string,"array(") !== false)
+                        {
+                $isArrayLong++;
+            }
+
+            if (strpos($string,")") !== false)
+                        {
+                $isArrayLong--;
+                $string .= "/*El Array Acaba aquí*/";
+            }
+
+        }
+
                 //ahora vamos a recorrer cada uno de los elementos que contiene el array config
                 foreach ($configAux as $clave => $valor)
                 {
@@ -202,28 +220,34 @@ function idpinstaller_hook_step7(&$data) {
                      {
                         //de ser así indicamos a ciertas variables y ponemos una marca por pantalla para que se vea que la hemos encontrado
                         $matched = true;
-
-                        //si contiene un array hay un ligero problemilla con el parseo de los datos 
-                        //por lo que los trataremos de manera diferente
+                       
                         if (strpos($string,"array(") !== false)
-                        {
-                            //para que no de ningún error de sintaxis en el fichero config de momento
-                            //simplemente no lo sobrescribo y ya está. Al mismo tiempo expongo la estructura de los pasos a seguir
-                            $fileContent .= $string . "\n";
+                {
+                $splitedString = explode( 'array(', $string );
 
-                            //primero comprobamos que el valor que tenemos nosotros en array config es efectivamente un array
-                            //y que la longitud del array es mayor que cero
-                            //de no ser así. Habría que insertar un array vacío
-                            if (!is_array($valor) || sizeof ($valor))
-                            {
-                                //aquí habría que insertar el array vacío y eliminar la línea o líneas del contenido del fichero que había anteriormente
+                $fileContent .= $splitedString[0] . "/*The Array Starts Here*/ ARRAY(". $splitedString[1];
+
+                if ( strpos ( $splitedString[1], ")" ) !== false )
+                {
+                $fileContent .= "/*The Array Finishes In the same Line*/";
+                }
+                    else
+                {
+                $isArrayLong = 1;
+                } 
+
+                            $fileContent .= "\n";
+                if (!is_array($valor))
+                {
+                    echo "NO ES UN ARRAY? Hemos encontrado que: {$string} es igual o contiene {$clave} </br>";
+                    echo "El config es de la siguiente forma: {$clave} => {$valor} </br </br>";
+                }
+                else
+                {
+                    echo "LONG: ". sizeof($valor) ." Hemos encontrado que: {$string} es igual o contiene {$clave} </br>";
+                                echo "El config es de la siguiente forma: {$clave} => {$valor} </br </br>";
                             }
-                            else
-                            {
-                                //Aquí habría que insertar cada uno de los elementos y eliminar todas las líneas correspondientes
-                                //al contenido del array que no sean comentarios
-                            }
-                        }
+            } 
                         //una vez que hemos obtenido los datos vamos a procesarlos de manera correcta
                         //en el caso de que sea un string añadiremos comillas simples al rededor del fichero
                         else if ( gettype($valor) == 'string' )
@@ -236,7 +260,7 @@ function idpinstaller_hook_step7(&$data) {
                         {
                             if ($valor == 0)
                             {
-                                $fileContent .= "'{$clave}' => FALSE, \n";
+                                $fileContent .= "'{$clave}' => FALSE, /*ERROR*/  \n";
                             }
                             else
                             {
@@ -274,6 +298,7 @@ function idpinstaller_hook_step7(&$data) {
         ////////////////////////////////////////////////////////////////
         //  Fin del nuevo código
         ////////////////////////////////////////////////////////////////
+
 
         if (!$res) {
             $data['errors'][] = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
