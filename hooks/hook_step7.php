@@ -195,23 +195,6 @@ function idpinstaller_hook_step7(&$data) {
             //si no es un comentario, entonces procedemos a comparar
             if ($isComment == false && $isCommentLong == false)
             {
-
-        //aquí vamos a comprobar si se cierra el array o si hay algún array anidado
-        if ($isArrayLong > 0)
-        {
-            if (strpos($string,"array(") !== false)
-                        {
-                $isArrayLong++;
-            }
-
-            if (strpos($string,")") !== false)
-                        {
-                $isArrayLong--;
-                $string .= "/*El Array Acaba aquí*/";
-            }
-
-        }
-
                 //ahora vamos a recorrer cada uno de los elementos que contiene el array config
                 foreach ($configAux as $clave => $valor)
                 {
@@ -221,33 +204,39 @@ function idpinstaller_hook_step7(&$data) {
                         //de ser así indicamos a ciertas variables y ponemos una marca por pantalla para que se vea que la hemos encontrado
                         $matched = true;
                        
+                       //primero comprobamos que el elemento a introducir previamente tenía un array en cuyo caso
+                        //lo trataremos de manera diferente
                         if (strpos($string,"array(") !== false)
-                {
-                $splitedString = explode( 'array(', $string );
+                        {
+                            //primero dividimos la linea entre lo que había antes y lo que hay después
+                            $splitedString = explode( 'array(', $string );
 
-                $fileContent .= $splitedString[0] . "/*The Array Starts Here*/ ARRAY(". $splitedString[1];
+                            //lo que hay antes lo dejamos intacto por ejemplo en el caso
+                            //'Nombre del atributo' => array('array','con muchas','cosas');
+                            //quedaría así 'Nombre del atributo' => "/*The Array Starts Here*/ array(
+                            $fileContent .= $splitedString[0] . "/*The Array Starts Here*/ array(";
 
-                if ( strpos ( $splitedString[1], ")" ) !== false )
-                {
-                $fileContent .= "/*The Array Finishes In the same Line*/";
-                }
-                    else
-                {
-                $isArrayLong = 1;
-                } 
+                            //a continuación comprobamos si es un array multilinea o si acaba en la misma linea
+                            if ( strpos ( $splitedString[1], ")" ) !== true )
+                            {
+                                $isArrayLong = 1;
+                            } 
 
-                            $fileContent .= "\n";
-                if (!is_array($valor))
-                {
-                    echo "NO ES UN ARRAY? Hemos encontrado que: {$string} es igual o contiene {$clave} </br>";
-                    echo "El config es de la siguiente forma: {$clave} => {$valor} </br </br>";
-                }
-                else
-                {
-                    echo "LONG: ". sizeof($valor) ." Hemos encontrado que: {$string} es igual o contiene {$clave} </br>";
-                                echo "El config es de la siguiente forma: {$clave} => {$valor} </br </br>";
+                            //ahora vemos si el valor por el que vamos a sustituir es un array y si no tiene longitud 0.
+                            //en este caso habría que introducir un array vacío
+                            if ( is_array($valor) && sizeof($valor) > 0 )
+                            {
+                                //aquí abría que insertar 1 por 1 los elementos del array
+                                echo "LONG: ". sizeof($valor) ." Hemos encontrado que: {$string} es igual o contiene {$clave} </br>";
+                                echo "El config es de la siguiente forma: {$clave} => {$valor} </br>";
                             }
-            } 
+                            else
+                            {
+                                //aquí habría que incluir un array vacío
+                            }
+
+                            $fileContent .= "),\n";
+                        } 
                         //una vez que hemos obtenido los datos vamos a procesarlos de manera correcta
                         //en el caso de que sea un string añadiremos comillas simples al rededor del fichero
                         else if ( gettype($valor) == 'string' )
@@ -260,7 +249,7 @@ function idpinstaller_hook_step7(&$data) {
                         {
                             if ($valor == 0)
                             {
-                                $fileContent .= "'{$clave}' => FALSE, /*ERROR*/  \n";
+                                $fileContent .= "'{$clave}' => FALSE,  \n";
                             }
                             else
                             {
@@ -274,7 +263,7 @@ function idpinstaller_hook_step7(&$data) {
                         }
                         else
                         {
-                            $fileContent .= "/*ERROR => " . $string . "*/";
+                            $fileContent .= "'{$clave}' => {$valor}, /*Tipo de dato no reconocido*/\n";
                         }
 
                         //además también eliminaremos este elemento del array para que no se vuelva a repetir
@@ -284,8 +273,26 @@ function idpinstaller_hook_step7(&$data) {
                 }
             }
 
+        //aquí vamos a comprobar si se cierra el array o si hay algún array anidado
+        if ($isArrayLong > 0)
+        {
+                //si es un array vamos a ver si la linea es un comentario y de ser así lo ignoramos
+                if ($isComment == false && $isCommentLong == false)
+                {
+                  //en el caso de los arrays anidados el valor is array long será superior a 1 indicando cuandos arrays tenemos anidados
+                  if (strpos($string,"array(") !== false)
+                  {
+                        $isArrayLong++;
+                  }
+
+                  if (strpos($string,")") !== false)
+                  {
+                        $isArrayLong--;
+                  }
+                }
+            }
             //si no se ha encontrado ninguna coincidencia entonces se copia el contenido del fichero tal cual
-            if ($matched === false)
+            else if ($matched == false)
             {
                 $fileContent .= $string . "\n";
             }
