@@ -36,25 +36,31 @@
 
 /**
  * Hook a ejecutar antes del paso 6 de la instalación
- * Comprueba los datos de conexión de la fuente de datos principal
+ * Comprueba los datos de conexión de la fuente de datos principal.
  *
  * @param array &$data  Los datos a utilizar por las plantillas de tipo stepn
  */
-function idpinstaller_hook_step6(&$data) {
+function idpinstaller_hook_step6(&$data) 
+{
     $data['datasources'] = getDataSources();
-    if (isset($_REQUEST['data_source_type'])) {
+    if (isset($_REQUEST['data_source_type'])) 
+    {
         $ds_type = $_REQUEST['data_source_type'];
-        if (strcmp($ds_type, "ldap") == 0 && ($data['datasources'] == "all" || $data['datasources'] == "ldap")) {
+        if (strcmp($ds_type, "ldap") == 0 && ($data['datasources'] == "all" || $data['datasources'] == "ldap")) 
+        {
             if (array_key_exists('ldap_hostname', $_REQUEST) && !empty($_REQUEST['ldap_hostname']) && 
-                    array_key_exists('ldap_port', $_REQUEST) && !empty($_REQUEST['ldap_port']) &&
-                    array_key_exists('ldap_enable_tls', $_REQUEST) && array_key_exists('ldap_referral', $_REQUEST)) {
+                array_key_exists('ldap_port', $_REQUEST) && !empty($_REQUEST['ldap_port']) &&
+                array_key_exists('ldap_enable_tls', $_REQUEST) && array_key_exists('ldap_referral', $_REQUEST)) 
+            {
                 $res = ldap_connect($_REQUEST['ldap_hostname'], $_REQUEST['ldap_port']);
-                ldap_set_option($res, LDAP_OPT_PROTOCOL_VERSION,3);     
+                ldap_set_option($res, LDAP_OPT_PROTOCOL_VERSION,3);
+
                 if( !empty($_REQUEST['ldap_anonymous_bind']) && $_REQUEST['ldap_anonymous_bind'] != '0'){
                     $res = @ldap_bind($res); //anonymous bind
                 }else{
                     $res = @ldap_bind($res,$_REQUEST['ldap_binddn'],$_REQUEST['ldap_bindpassword']); //non-anonymous bind
                 }
+                
                 if (!$res) {
                     $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step5_datasource_error}');
                     $data['datasource_selected'] = 'ldap';
