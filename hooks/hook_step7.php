@@ -215,7 +215,7 @@ function idpinstaller_hook_step7(&$data) {
                             //lo que hay antes lo dejamos intacto por ejemplo en el caso
                             //'Nombre del atributo' => array('array','con muchas','cosas');
                             //quedaría así 'Nombre del atributo' => "/*The Array Starts Here*/ array(
-                $fileContent .= $splitedString[0] . "/*The Array Starts Here*/ array(";
+                $fileContent .= $splitedString[0] . "array(";
 
                 //a continuación comprobamos si es un array multilinea o si acaba en la misma linea
                 if ( strpos ( $string, ")," ) !== false )
@@ -265,7 +265,7 @@ function idpinstaller_hook_step7(&$data) {
                         }
                         else
                         {
-                            $fileContent .= "'{$clave}' => {$valor}, /*Tipo de dato no reconocido*/\n";
+                            $fileContent .= "'{$clave}' => {$valor},\n";
                         }
 
                         //además también eliminaremos este elemento del array para que no se vuelva a repetir
