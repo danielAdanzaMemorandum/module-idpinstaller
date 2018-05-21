@@ -48,7 +48,7 @@
 //Hecho en Mayo / 2018
 //Función para sobrescribir el authsources tomando como modelo el registrado en config-templates/authources.php
 
-function overwriteAuthsources (&$config)
+function overwriteAuthsources ($config)
 {
         echo "Has entrado en la función authsources";
 
@@ -70,6 +70,72 @@ function overwriteAuthsources (&$config)
 
     //mostramos por pantalla el array ConfigAux para verificar que accedemos a él correctamente
     echo implode(" ",$configAux);
+
+        //una vez dividido pasamos a recorrerlo
+        foreach ($split as $string)
+        {
+            $matched = false;
+
+            //Primero de todo. miramos si la linea es un comentario o no
+            $isComment = false;
+            //primero le quitamos los espacios en blanco
+            $stringAux = str_replace(' ', '', $string);
+
+            if (substr($stringAux,0,1) == '/')
+            {
+                //si empieza por /* entonces es un comentario de varias lineas
+
+                if ( substr($stringAux,1,1) == '*')
+                {
+                    $isComment = true;
+                    $isCommentLong = true;
+                }
+                //si empieza por //entonces es un comentario de una linea
+                if (substr($stringAux,1,1) == '/')
+                {
+                    $isComment = true;
+                }
+            }
+            //Por el contrario si contiene * / suponemos que se ha cerrado un comentario largo
+            if (substr($stringAux,0,1) == '*')
+            {
+                if (substr($stringAux,1,1) == '/')
+                {
+                    $isComment = true;
+                    $isCommentLong = false;
+                }
+            }
+
+            //aquí vamos a comprobar si se cierra el array o si hay algún array anidado
+            //comprobamos que matched sea falso por que de lo contrario la primera vez lo sumará dos veces
+            if ($isArrayLong > 0 && $matched == false)
+            {
+                    if ($isComment == false && $isCommentLong == false)
+                    {
+                      if (strpos($string,"array(") !== false)
+                      {
+                            $isArrayLong++;
+                      }
+
+                      if (strpos($string,"),") !== false)
+                      {
+                            $isArrayLong--;
+                      }
+
+                    }
+                else
+                {
+                    $fileContent .= $string . "\n";
+                }
+            }
+            //si no se ha encontrado ninguna coincidencia entonces se copia el contenido del fichero tal cual
+            else if ($matched == false)
+            {
+                $fileContent .= $string . "\n";
+            }
+    }
+
+    echo $fileContent;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -160,7 +226,7 @@ function idpinstaller_hook_step6(&$data) {
                     }
                     $res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
                     
-            overwriteAuthsources ($config);        
+            overwriteAuthsources ($config);     
 
             if (!$res2) {
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
