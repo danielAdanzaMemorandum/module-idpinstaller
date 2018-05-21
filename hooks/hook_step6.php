@@ -48,7 +48,7 @@
 //Hecho en Mayo / 2018
 //Función para sobrescribir el authsources tomando como modelo el registrado en config-templates/authources.php
 
-function overwriteAuthsources ()
+function overwriteAuthsources (&$config)
 {
         echo "Has entrado en la función authsources";
 
@@ -122,7 +122,7 @@ function idpinstaller_hook_step6(&$data) {
                     }
                     $res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
                     
-            overwriteAuthsources ();
+            overwriteAuthsources ($config);
 
             if (!$res2) {
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
@@ -160,7 +160,7 @@ function idpinstaller_hook_step6(&$data) {
                     }
                     $res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
                     
-            overwriteAuthsources ();        
+            overwriteAuthsources ($config);        
 
             if (!$res2) {
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
