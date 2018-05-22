@@ -106,6 +106,87 @@ function overwriteAuthsources ($config)
                 }
             }
 
+            //si no es un comentario, entonces procedemos a comparar
+            if ($isComment == false && $isCommentLong == false)
+            {
+                //ahora vamos a recorrer cada uno de los elementos que contiene el array config
+                foreach ($configAux as $clave => $valor)
+                {
+                     //por cada elemento del config vamos a ver si coincide o si contiene la cadena que estamos buscando
+                     if (strpos($string, $clave) !== false) 
+                     {
+                        //de ser así indicamos a ciertas variables y ponemos una marca por pantalla para que se vea que la hemos encontrado
+                        $matched = true;
+                       
+                    //si encontramos que vamos a sobrescribir un array entonces lo vamos a tratar de manera diferente
+                    if (strpos($string,"array(") !== false)
+                    {
+                        //dividimos el string en dos lo que viene antes del array y lo que viene después
+                        $splitedString = explode( 'array(', $string );
+                    
+                    //lo que hay antes lo dejamos intacto por ejemplo en el caso
+                    //'Nombre del atributo' => array('array','con muchas','cosas');
+                    //quedaría así 'Nombre del atributo' => array(
+                    $fileContent .= $splitedString[0] . "/*NEW ARRAY*/array(";
+
+                    //a continuación comprobamos si es un array multilinea o si acaba en la misma linea
+                    if ( strpos ( $string, ")," ) !== false )
+                    {
+                        //el array acaba en la misma linea
+                    } 
+                    else
+                    {
+                        $isArrayLong = 1;
+                    }
+
+                    //ahora veremos el contenido del nuevo array que tenemos en el config
+                //en el caso de que no sea un array o que tenga longitud Cero entonces dejamos el nuevo array vacío
+                if ( is_array($valor) && sizeof($valor) > 0 )
+                {
+                if ( strcmp($valor[0],"Array") !== 0 )
+                {
+                    $fileContent .= "'". implode("','",$valor) . "'";
+                }
+                            }
+
+                    $fileContent .= "),\n";
+            } 
+                        //una vez que hemos obtenido los datos vamos a procesarlos de manera correcta
+                        //en el caso de que sea un string añadiremos comillas simples al rededor del fichero
+                        else if ( gettype($valor) == 'string' )
+                        {
+                            $fileContent .= "'{$clave}' => '{$valor}',/*NEW*/ \n";
+                        }
+                        //en el caso de que tengamos un dato boleano, el propio php mostrará un 0 si el valor es falso
+                        //y cualquier otro número en el caso de que el valor sea verdadero
+                        else if ( gettype($valor) == 'boolean' )
+                        {
+                            if ($valor == 0)
+                            {
+                                $fileContent .= "'{$clave}' => FALSE,  /*NEW*/\n";
+                            }
+                            else
+                            {
+                                $fileContent .= "'{$clave}' => TRUE, /*NEW*/\n";
+                            }
+                        }
+                        //finalmente si el tipo de dato es NULL no mostrará nada. Por lo que será necesario incluir tambien el valor null
+                        else if ( gettype($valor) == 'NULL' )
+                        {
+                                $fileContent .= "'{$clave}' => NULL, /*NEW*/\n";
+                        }
+                        else
+                        {
+                            $fileContent .= "'{$clave}' => {$valor},/*NEW*/\n";
+                        }
+
+                        //además también eliminaremos este elemento del array para que no se vuelva a repetir
+                        unset($configAux[$clave]);
+
+                     }
+                }
+            }
+
             //aquí vamos a comprobar si se cierra el array o si hay algún array anidado
             //comprobamos que matched sea falso por que de lo contrario la primera vez lo sumará dos veces
             if ($isArrayLong > 0 && $matched == false)
@@ -125,16 +206,17 @@ function overwriteAuthsources ($config)
                     }
                 else
                 {
-                    $fileContent .= $string . "\n";
+                    $fileContent .= $string . "<br/>";
                 }
             }
             //si no se ha encontrado ninguna coincidencia entonces se copia el contenido del fichero tal cual
             else if ($matched == false)
             {
-                $fileContent .= $string . "\n";
+                $fileContent .= $string . "<br/>";
             }
-    }
-
+               
+        }
+    
     echo $fileContent;
 }
 
