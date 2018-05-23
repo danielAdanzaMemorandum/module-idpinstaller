@@ -48,7 +48,7 @@
 //Hecho en Mayo / 2018
 //Función para sobrescribir el authsources tomando como modelo el registrado en config-templates/authources.php
 
-function overwriteAuthsources ($config)
+function overwriteAuthsources ($config, $filename)
 {
         echo "Has entrado en la función authsources";
 
@@ -96,14 +96,11 @@ function overwriteAuthsources ($config)
                     $isComment = true;
                 }
             }
-            //Por el contrario si contiene * / suponemos que se ha cerrado un comentario largo
-            if (substr($stringAux,0,1) == '*')
-            {
-                if (substr($stringAux,1,1) == '/')
-                {
-                    $isComment = true;
-                    $isCommentLong = false;
-                }
+           //Por el contrario si contiene * / suponemos que se ha cerrado un comentario largo
+           if (strpos($stringAux, '*/') !== false) 
+       {
+               $isComment = true;
+               $isCommentLong = false;
             }
 
             //si no es un comentario, entonces procedemos a comparar
@@ -191,6 +188,7 @@ function overwriteAuthsources ($config)
             //comprobamos que matched sea falso por que de lo contrario la primera vez lo sumará dos veces
             if ($isArrayLong > 0 && $matched == false)
             {
+
                     if ($isComment == false && $isCommentLong == false)
                     {
                       if (strpos($string,"array(") !== false)
@@ -216,8 +214,9 @@ function overwriteAuthsources ($config)
             }
                
         }
-    
-    echo $fileContent;
+
+    //Creamos el fichero php correspondiente
+        $res = @file_put_contents($filename, $fileContent);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -268,9 +267,12 @@ function idpinstaller_hook_step6(&$data) {
                     if (array_key_exists('sql_datasource', $config)) {
                         unset($config['sql_datasource']);
                     }
-                    $res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
-                    
-            overwriteAuthsources ($config);
+
+                    //antigua forma de hacerlo
+                    //$res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
+                    //nueva forma de hacerlo
+                    overwriteAuthsources ($config, $filename );
+
 
             if (!$res2) {
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
@@ -306,9 +308,10 @@ function idpinstaller_hook_step6(&$data) {
                     if (array_key_exists('ldap_datasource', $config)) {
                         unset($config['ldap_datasource']);
                     }
-                    $res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
-                    
-            overwriteAuthsources ($config);     
+            //antigua forma de hacerlo
+                    //$res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
+                    //nueva forma de hacerlo
+            overwriteAuthsources ($config, $filename );     
 
             if (!$res2) {
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
