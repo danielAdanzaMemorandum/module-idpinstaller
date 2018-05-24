@@ -68,9 +68,6 @@ function overwriteAuthsources ($config, $filename)
         //creamos la variable config aux para no altearar el array original
         $configAux = $config;
 
-    //mostramos por pantalla el array ConfigAux para verificar que accedemos a él correctamente
-    echo implode(" ",$configAux);
-
         //una vez dividido pasamos a recorrerlo
         foreach ($split as $string)
         {
@@ -204,16 +201,25 @@ function overwriteAuthsources ($config, $filename)
                     }
                 else
                 {
-                    $fileContent .= $string . "<br/>";
+                    $fileContent .= $string . "\n";
                 }
             }
             //si no se ha encontrado ninguna coincidencia entonces se copia el contenido del fichero tal cual
             else if ($matched == false)
             {
-                $fileContent .= $string . "<br/>";
+                $fileContent .= $string . "\n";
             }
                
         }
+
+    echo "==>" . count($configAux);
+
+    //recorremos el array por si acaso se nos han quedado datos sin sobrescribir
+    foreach ($configAux as $clave => $valor)
+    {
+      $arrayToString = "'". implode("','",$valor) . "'";
+       echo "==>'{$clave}' => array({$arrayToString}), \n";
+    }
 
     //Creamos el fichero php correspondiente
         $res = @file_put_contents($filename, $fileContent);
@@ -269,7 +275,7 @@ function idpinstaller_hook_step6(&$data) {
                     }
 
                     //antigua forma de hacerlo
-                    //$res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
+                    /*$res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");*/
                     //nueva forma de hacerlo
                     overwriteAuthsources ($config, $filename );
 
@@ -309,7 +315,7 @@ function idpinstaller_hook_step6(&$data) {
                         unset($config['ldap_datasource']);
                     }
             //antigua forma de hacerlo
-                    //$res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");
+                    /*$res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");*/
                     //nueva forma de hacerlo
             overwriteAuthsources ($config, $filename );     
 
