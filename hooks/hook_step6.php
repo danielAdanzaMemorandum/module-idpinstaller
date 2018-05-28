@@ -50,8 +50,6 @@
 
 function overwriteAuthsources ($config, $filename)
 {
-        echo "Has entrado en la función authsources";
-
         $file = __DIR__ . '/../../../config-templates/authsources.php';
         $fopen = fopen($file, 'r');
         $fread = fread($fopen,filesize($file));
@@ -68,10 +66,13 @@ function overwriteAuthsources ($config, $filename)
         //creamos la variable config aux para no altearar el array original
         $configAux = $config;
 
+    $i = 0;
+    
         //una vez dividido pasamos a recorrerlo
         foreach ($split as $string)
         {
             $matched = false;
+        $i++;
 
             //Primero de todo. miramos si la linea es un comentario o no
             $isComment = false;
@@ -121,7 +122,7 @@ function overwriteAuthsources ($config, $filename)
                     //lo que hay antes lo dejamos intacto por ejemplo en el caso
                     //'Nombre del atributo' => array('array','con muchas','cosas');
                     //quedaría así 'Nombre del atributo' => array(
-                    $fileContent .= $splitedString[0] . "/*NEW ARRAY*/array(";
+                    $fileContent .= $splitedString[0] . "array(";
 
                     //a continuación comprobamos si es un array multilinea o si acaba en la misma linea
                     if ( strpos ( $string, ")," ) !== false )
@@ -133,14 +134,14 @@ function overwriteAuthsources ($config, $filename)
                         $isArrayLong = 1;
                     }
 
-                    //ahora veremos el contenido del nuevo array que tenemos en el config
-                //en el caso de que no sea un array o que tenga longitud Cero entonces dejamos el nuevo array vacío
-                if ( is_array($valor) && sizeof($valor) > 0 )
-                {
-                if ( strcmp($valor[0],"Array") !== 0 )
-                {
-                    $fileContent .= "'". implode("','",$valor) . "'";
-                }
+                            //ahora veremos el contenido del nuevo array que tenemos en el config
+                        //en el caso de que no sea un array o que tenga longitud Cero entonces dejamos el nuevo array vacío
+                        if ( is_array($valor) && sizeof($valor) > 0 )
+                        {
+                        if ( strcmp($valor[0],"Array") !== 0 )
+                        {
+                                $fileContent .= "'". implode("','",$valor) . "'";
+                        }
                             }
 
                     $fileContent .= "),\n";
@@ -149,7 +150,7 @@ function overwriteAuthsources ($config, $filename)
                         //en el caso de que sea un string añadiremos comillas simples al rededor del fichero
                         else if ( gettype($valor) == 'string' )
                         {
-                            $fileContent .= "'{$clave}' => '{$valor}',/*NEW*/ \n";
+                            $fileContent .= "'{$clave}' => '{$valor}', \n";
                         }
                         //en el caso de que tengamos un dato boleano, el propio php mostrará un 0 si el valor es falso
                         //y cualquier otro número en el caso de que el valor sea verdadero
@@ -157,21 +158,21 @@ function overwriteAuthsources ($config, $filename)
                         {
                             if ($valor == 0)
                             {
-                                $fileContent .= "'{$clave}' => FALSE,  /*NEW*/\n";
+                                $fileContent .= "'{$clave}' => FALSE,\n";
                             }
                             else
                             {
-                                $fileContent .= "'{$clave}' => TRUE, /*NEW*/\n";
+                                $fileContent .= "'{$clave}' => TRUE,\n";
                             }
                         }
                         //finalmente si el tipo de dato es NULL no mostrará nada. Por lo que será necesario incluir tambien el valor null
                         else if ( gettype($valor) == 'NULL' )
                         {
-                                $fileContent .= "'{$clave}' => NULL, /*NEW*/\n";
+                                $fileContent .= "'{$clave}' => NULL,\n";
                         }
                         else
                         {
-                            $fileContent .= "'{$clave}' => {$valor},/*NEW*/\n";
+                            $fileContent .= "'{$clave}' => {$valor},\n";
                         }
 
                         //además también eliminaremos este elemento del array para que no se vuelva a repetir
@@ -207,19 +208,25 @@ function overwriteAuthsources ($config, $filename)
             //si no se ha encontrado ninguna coincidencia entonces se copia el contenido del fichero tal cual
             else if ($matched == false)
             {
-                $fileContent .= $string . "\n";
+           if ($i == count($split) - 1 )
+           {
+                //recorremos el array por si acaso se nos han quedado datos sin sobrescribir
+                foreach ($configAux as $clave => $valor)
+                {
+                        $arrayToString = "'". implode("','",$valor) . "'";
+                    $fileContent .=  "'{$clave}' => array({$arrayToString}), \n";
+                }
+
+            $fileContent .= $string . "\n";
+            
+           }
+           else
+           {
+                   $fileContent .= $string . "\n";
+           }
             }
                
         }
-
-    echo "==>" . count($configAux);
-
-    //recorremos el array por si acaso se nos han quedado datos sin sobrescribir
-    foreach ($configAux as $clave => $valor)
-    {
-      $arrayToString = "'". implode("','",$valor) . "'";
-       echo "==>'{$clave}' => array({$arrayToString}), \n";
-    }
 
     //Creamos el fichero php correspondiente
         $res = @file_put_contents($filename, $fileContent);
