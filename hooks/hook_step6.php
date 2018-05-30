@@ -3,8 +3,8 @@
  *  IdPRef - IdP de Referencia para SIR 2 basado en SimpleSAMLPHP v1.13.1
  * =========================================================================== *
  *
- * Copyright (C) 2014 - 2015 by the Spanish Research and Academic Network.
- * This code was developed by Auditoria y Consultoría de Privacidad y Seguridad
+ * Copyright (C) 2014 - 2015 by the Spanish Research and Academic Network.
+ * This code was developed by Auditoria y Consultoría de Privacidad y Seguridad
  * (PRiSE http://www.prise.es) for the RedIRIS SIR service (SIR: 
  * http://www.rediris.es/sir)
  *
@@ -23,7 +23,6 @@
  * the License.
  *
  * ************************************************************************** */
-
 /** 
  * Paso 6 del modulo instalador para SimpleSAMLphp v1.13.1
  * @package    IdPRef\modules\idpinstaller
@@ -33,7 +32,6 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License 2.0
  * @version    0.3-Sprint3-R57
  */
-
 /**
  * Hook a ejecutar antes del paso 6 de la instalación
  * Comprueba los datos de conexión de la fuente de datos principal
@@ -47,25 +45,21 @@
 //Para dudas sobre el código: daniel.adanza@externos.rediris.com
 //Hecho en Mayo / 2018
 //Función para sobrescribir el authsources tomando como modelo el registrado en config-templates/authources.php
-
 function overwriteAuthsources ($config, $filename)
 {
         $file = __DIR__ . '/../../../config-templates/authsources.php';
         $fopen = fopen($file, 'r');
         $fread = fread($fopen,filesize($file));
         fclose($fopen);
-
         //a continuación dividiremos el fichero en líneas
         $remove = "\n";
         $split = explode($remove, $fread);
-
         //declaramos también otras variables útiles para el recorrido del contenido del fichero
         $fileContent = "";
         $isCommentLong = false;
         $isArrayLong = 0;
         //creamos la variable config aux para no altearar el array original
         $configAux = $config;
-
     $i = 0;
     
         //una vez dividido pasamos a recorrerlo
@@ -73,16 +67,13 @@ function overwriteAuthsources ($config, $filename)
         {
             $matched = false;
         $i++;
-
             //Primero de todo. miramos si la linea es un comentario o no
             $isComment = false;
             //primero le quitamos los espacios en blanco
             $stringAux = str_replace(' ', '', $string);
-
             if (substr($stringAux,0,1) == '/')
             {
                 //si empieza por /* entonces es un comentario de varias lineas
-
                 if ( substr($stringAux,1,1) == '*')
                 {
                     $isComment = true;
@@ -96,11 +87,10 @@ function overwriteAuthsources ($config, $filename)
             }
            //Por el contrario si contiene * / suponemos que se ha cerrado un comentario largo
            if (strpos($stringAux, '*/') !== false) 
-       {
+           {
                $isComment = true;
                $isCommentLong = false;
             }
-
             //si no es un comentario, entonces procedemos a comparar
             if ($isComment == false && $isCommentLong == false)
             {
@@ -123,7 +113,6 @@ function overwriteAuthsources ($config, $filename)
                     //'Nombre del atributo' => array('array','con muchas','cosas');
                     //quedaría así 'Nombre del atributo' => array(
                     $fileContent .= $splitedString[0] . "array(";
-
                     //a continuación comprobamos si es un array multilinea o si acaba en la misma linea
                     if ( strpos ( $string, ")," ) !== false )
                     {
@@ -133,7 +122,6 @@ function overwriteAuthsources ($config, $filename)
                     {
                         $isArrayLong = 1;
                     }
-
                             //ahora veremos el contenido del nuevo array que tenemos en el config
                         //en el caso de que no sea un array o que tenga longitud Cero entonces dejamos el nuevo array vacío
                         if ( is_array($valor) && sizeof($valor) > 0 )
@@ -143,7 +131,6 @@ function overwriteAuthsources ($config, $filename)
                                 $fileContent .= "'". implode("','",$valor) . "'";
                         }
                             }
-
                     $fileContent .= "),\n";
             } 
                         //una vez que hemos obtenido los datos vamos a procesarlos de manera correcta
@@ -174,31 +161,25 @@ function overwriteAuthsources ($config, $filename)
                         {
                             $fileContent .= "'{$clave}' => {$valor},\n";
                         }
-
                         //además también eliminaremos este elemento del array para que no se vuelva a repetir
                         unset($configAux[$clave]);
-
                      }
                 }
             }
-
             //aquí vamos a comprobar si se cierra el array o si hay algún array anidado
             //comprobamos que matched sea falso por que de lo contrario la primera vez lo sumará dos veces
             if ($isArrayLong > 0 && $matched == false)
             {
-
                     if ($isComment == false && $isCommentLong == false)
                     {
                       if (strpos($string,"array(") !== false)
                       {
                             $isArrayLong++;
                       }
-
                       if (strpos($string,"),") !== false)
                       {
                             $isArrayLong--;
                       }
-
                     }
                 else
                 {
@@ -213,10 +194,43 @@ function overwriteAuthsources ($config, $filename)
                 //recorremos el array por si acaso se nos han quedado datos sin sobrescribir
                 foreach ($configAux as $clave => $valor)
                 {
-                        $arrayToString = "'". implode("','",$valor) . "'";
-                    $fileContent .=  "'{$clave}' => array({$arrayToString}), \n";
-                }
+                    /*$arrayToString = "'". implode("','",$valor) . "'";*/
+                    /*$fileContent .=  "'{$clave}' => array({$arrayToString}), \n";*/
+            
+            $stringAux = "";
+            $stringAux .= "'{$clave}' => array (";
 
+                    $num = 0;
+            foreach ( $valor as $row )
+            {
+            $num++;
+
+            if ( is_array($row) && sizeof($row) == 0  )
+            {
+               /*echo "'array( ". implode("','",$row) . "'";*/
+               $stringAux .= " array(), ";
+            }
+            else
+            {
+               if ($num == 8)
+               {
+                $stringAux .= '"{$row}", ';
+               }
+               else if ( $num == sizeof($valor) )
+               {
+                $stringAux .= "'{$row}'";
+                   }
+               else
+               {
+                $stringAux .= "'{$row}', ";
+               }
+            }
+            }
+
+            $stringAux .= "), ";
+
+            $fileContent .= $stringAux . "\n";
+                }
             $fileContent .= $string . "\n";
             
            }
@@ -227,11 +241,9 @@ function overwriteAuthsources ($config, $filename)
             }
                
         }
-
     //Creamos el fichero php correspondiente
-        $res = @file_put_contents($filename, $fileContent);
+        return @file_put_contents($filename, $fileContent);
 }
-
 ////////////////////////////////////////////////////////////////
 //  Fin del nuevo código
 ////////////////////////////////////////////////////////////////
@@ -280,13 +292,10 @@ function idpinstaller_hook_step6(&$data) {
                     if (array_key_exists('sql_datasource', $config)) {
                         unset($config['sql_datasource']);
                     }
-
                     //antigua forma de hacerlo
                     /*$res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");*/
                     //nueva forma de hacerlo
                     overwriteAuthsources ($config, $filename );
-
-
             if (!$res2) {
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error2}') . " <i>" . realpath($filename) . "</i>";
@@ -324,8 +333,7 @@ function idpinstaller_hook_step6(&$data) {
             //antigua forma de hacerlo
                     /*$res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");*/
                     //nueva forma de hacerlo
-            overwriteAuthsources ($config, $filename );     
-
+                    $res2 = overwriteAuthsources ($config, $filename);     
             if (!$res2) {
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error2}') . " <i>" . realpath($filename) . "</i>";
