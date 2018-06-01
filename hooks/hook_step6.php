@@ -192,61 +192,18 @@ function overwriteAuthsources ($config, $filename)
             //si no se ha encontrado ninguna coincidencia entonces se copia el contenido del fichero tal cual
             else if ($matched == false)
             {
-           if ($i == count($split) - 1 )
-           {
-                //recorremos el array por si acaso se nos han quedado datos sin sobrescribir
-                foreach ($configAux as $clave => $valor)
-                {
-            echo var_export($valor);
-            
-            /*$stringAux = "";
-            $stringAux .= "----->'{$clave}' => array (";
-
-                    $num = 0;
-            foreach ( $valor as $row )
+            if ($i == count($split) - 1 )
             {
-            $num++;
-
-            if ( is_array($row) && sizeof($row) == 0  )
-            {
-               echo "'array( ". implode("','",$row) . "'";
-               $stringAux .= " array(), ";
+                    //recorremos el array por si acaso se nos han quedado datos sin sobrescribir
+                    foreach ($configAux as $clave => $valor)
+                    {
+                //en este caso todos los elementos que encontramos son un array de arrays así que para una mayor eficiencia
+                //utilizaremos la función var_export
+                    $fileContent .= " '{$clave}' => Array (" . var_export($valor) . "), \n";
+                    }
+         }
+                    $fileContent .= $string . "\n";
             }
-            else if ( $num == sizeof($row) )
-            {
-               $stringAux .= "'{row}' ";
-            }
-                        else if ( gettype($row) == 'string' )
-                        {
-                            $stringAux .= "'{$row}', ";
-                        }
-                        //en el caso de que tengamos un dato boleano, el propio php mostrará un 0 si el valor es falso
-                        //y cualquier otro número en el caso de que el valor sea verdadero
-                        else if ( gettype($row) == 'boolean' )
-                        {
-                            if ($row == 0)
-                            {
-                                $stringAux .= " FALSE, ";
-                            }
-                            else
-                            {
-                                $stringAux .= " TRUE, ";
-                            }
-                        }
-                        //finalmente si el tipo de dato es NULL no mostrará nada. Por lo que será necesario incluir tambien el valor null
-                        else if ( gettype($row) == 'NULL' )
-                        {
-                                $stringAux .= " NULL, ";
-                        }
-                        else
-                        {
-                            $stringAux .= "{$valor}, ";
-                        }
-            }*/
-                }
-            $fileContent .= $string . "\n";
-            
-           }
            else
            {
                    $fileContent .= $string . "\n";
