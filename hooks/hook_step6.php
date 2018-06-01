@@ -47,6 +47,9 @@
 //Función para sobrescribir el authsources tomando como modelo el registrado en config-templates/authources.php
 function overwriteAuthsources ($config, $filename)
 {
+
+    echo "se ha entrado en la función authsources <br/>";
+
         $file = __DIR__ . '/../../../config-templates/authsources.php';
         $fopen = fopen($file, 'r');
         $fread = fread($fopen,filesize($file));
@@ -194,11 +197,10 @@ function overwriteAuthsources ($config, $filename)
                 //recorremos el array por si acaso se nos han quedado datos sin sobrescribir
                 foreach ($configAux as $clave => $valor)
                 {
-                    /*$arrayToString = "'". implode("','",$valor) . "'";*/
-                    /*$fileContent .=  "'{$clave}' => array({$arrayToString}), \n";*/
+            echo var_export($valor);
             
-            $stringAux = "";
-            $stringAux .= "'{$clave}' => array (";
+            /*$stringAux = "";
+            $stringAux .= "----->'{$clave}' => array (";
 
                     $num = 0;
             foreach ( $valor as $row )
@@ -207,29 +209,40 @@ function overwriteAuthsources ($config, $filename)
 
             if ( is_array($row) && sizeof($row) == 0  )
             {
-               /*echo "'array( ". implode("','",$row) . "'";*/
+               echo "'array( ". implode("','",$row) . "'";
                $stringAux .= " array(), ";
             }
-            else
+            else if ( $num == sizeof($row) )
             {
-               if ($num == 8)
-               {
-                $stringAux .= '"{$row}", ';
-               }
-               else if ( $num == sizeof($valor) )
-               {
-                $stringAux .= "'{$row}'";
-                   }
-               else
-               {
-                $stringAux .= "'{$row}', ";
-               }
+               $stringAux .= "'{row}' ";
             }
-            }
-
-            $stringAux .= "), ";
-
-            $fileContent .= $stringAux . "\n";
+                        else if ( gettype($row) == 'string' )
+                        {
+                            $stringAux .= "'{$row}', ";
+                        }
+                        //en el caso de que tengamos un dato boleano, el propio php mostrará un 0 si el valor es falso
+                        //y cualquier otro número en el caso de que el valor sea verdadero
+                        else if ( gettype($row) == 'boolean' )
+                        {
+                            if ($row == 0)
+                            {
+                                $stringAux .= " FALSE, ";
+                            }
+                            else
+                            {
+                                $stringAux .= " TRUE, ";
+                            }
+                        }
+                        //finalmente si el tipo de dato es NULL no mostrará nada. Por lo que será necesario incluir tambien el valor null
+                        else if ( gettype($row) == 'NULL' )
+                        {
+                                $stringAux .= " NULL, ";
+                        }
+                        else
+                        {
+                            $stringAux .= "{$valor}, ";
+                        }
+            }*/
                 }
             $fileContent .= $string . "\n";
             
@@ -295,7 +308,7 @@ function idpinstaller_hook_step6(&$data) {
                     //antigua forma de hacerlo
                     /*$res2 = @file_put_contents($filename, '<?php  $config = ' . var_export($config, 1) . "; ?>");*/
                     //nueva forma de hacerlo
-                    overwriteAuthsources ($config, $filename );
+                    $res2 = overwriteAuthsources ($config, $filename );
             if (!$res2) {
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error}');
                         $data['errors'][]            = $data['ssphpobj']->t('{idpinstaller:idpinstaller:step2_contact_save_error2}') . " <i>" . realpath($filename) . "</i>";
