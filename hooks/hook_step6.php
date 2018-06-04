@@ -63,7 +63,7 @@ function overwriteAuthsources ($config, $filename)
         $isArrayLong = 0;
         //creamos la variable config aux para no altearar el array original
         $configAux = $config;
-    $i = 0;
+        $i = 0;
     
         //una vez dividido pasamos a recorrerlo
         foreach ($split as $string)
@@ -106,36 +106,41 @@ function overwriteAuthsources ($config, $filename)
                         //de ser así indicamos a ciertas variables y ponemos una marca por pantalla para que se vea que la hemos encontrado
                         $matched = true;
                        
-                    //si encontramos que vamos a sobrescribir un array entonces lo vamos a tratar de manera diferente
-                    if (strpos($string,"array(") !== false)
-                    {
-                        //dividimos el string en dos lo que viene antes del array y lo que viene después
-                        $splitedString = explode( 'array(', $string );
+                        //si encontramos que vamos a sobrescribir un array entonces lo vamos a tratar de manera diferente
+                        if (strpos($string,"array(") !== false)
+                        {
+                            //dividimos el string en dos lo que viene antes del array y lo que viene después
+                            $splitedString = explode( 'array(', $string );
                     
-                    //lo que hay antes lo dejamos intacto por ejemplo en el caso
-                    //'Nombre del atributo' => array('array','con muchas','cosas');
-                    //quedaría así 'Nombre del atributo' => array(
-                    $fileContent .= $splitedString[0] . "array(";
-                    //a continuación comprobamos si es un array multilinea o si acaba en la misma linea
-                    if ( strpos ( $string, ")," ) !== false )
-                    {
-                        //el array acaba en la misma linea
-                    } 
-                    else
-                    {
-                        $isArrayLong = 1;
-                    }
-                            //ahora veremos el contenido del nuevo array que tenemos en el config
-                        //en el caso de que no sea un array o que tenga longitud Cero entonces dejamos el nuevo array vacío
-                        if ( is_array($valor) && sizeof($valor) > 0 )
-                        {
-                        if ( strcmp($valor[0],"Array") !== 0 )
-                        {
-                                $fileContent .= "'". implode("','",$valor) . "'";
-                        }
+                            //lo que hay antes lo dejamos intacto por ejemplo en el caso
+                            //'Nombre del atributo' => array('array','con muchas','cosas');
+                            //quedaría así 'Nombre del atributo' => array(
+                            $fileContent .= $splitedString[0] . "array(";
+                            //a continuación comprobamos si es un array multilinea o si acaba en la misma linea
+                            if ( strpos ( $string, ")," ) !== false )
+                            {
+                                //el array acaba en la misma linea
+                            } 
+                            else
+                            {
+                                $isArrayLong = 1;
                             }
-                    $fileContent .= "),\n";
-            } 
+                            //ahora veremos el contenido del nuevo array que tenemos en el config
+                            //en el caso de que no sea un array o que tenga longitud Cero entonces dejamos el nuevo array vacío
+                            if ( is_array($valor) && sizeof($valor) > 0 )
+                            {
+                                if ( strcmp($valor[0],"Array") !== 0 )
+                                {
+                                    //$fileContent .= "'". implode("','",$valor) . "'";
+                                    $fileContent .= var_export($valor) . "/* Nuevo Array Insertado */";
+
+                                    echo "sobreescrito -->" . implode("','",$valor) . "<br/>";
+                                    echo "sobreescrito ->" . var_export($valor) . "<br/>";
+                                }
+                            }
+
+                            $fileContent .= "),\n";
+                        } 
                         //una vez que hemos obtenido los datos vamos a procesarlos de manera correcta
                         //en el caso de que sea un string añadiremos comillas simples al rededor del fichero
                         else if ( gettype($valor) == 'string' )
@@ -173,17 +178,17 @@ function overwriteAuthsources ($config, $filename)
             //comprobamos que matched sea falso por que de lo contrario la primera vez lo sumará dos veces
             if ($isArrayLong > 0 && $matched == false)
             {
-                    if ($isComment == false && $isCommentLong == false)
+                if ($isComment == false && $isCommentLong == false)
+                {
+                    if (strpos($string,"array(") !== false)
                     {
-                      if (strpos($string,"array(") !== false)
-                      {
-                            $isArrayLong++;
-                      }
-                      if (strpos($string,"),") !== false)
-                      {
-                            $isArrayLong--;
-                      }
+                        $isArrayLong++;
                     }
+                    if (strpos($string,"),") !== false)
+                    {
+                        $isArrayLong--;
+                    }
+                }
                 else
                 {
                     $fileContent .= $string . "\n";
@@ -192,23 +197,22 @@ function overwriteAuthsources ($config, $filename)
             //si no se ha encontrado ninguna coincidencia entonces se copia el contenido del fichero tal cual
             else if ($matched == false)
             {
-            if ($i == count($split) - 1 )
-            {
+                if ($i == count($split) - 1 )
+                {
                     //recorremos el array por si acaso se nos han quedado datos sin sobrescribir
                     foreach ($configAux as $clave => $valor)
                     {
-                //en este caso todos los elementos que encontramos son un array de arrays así que para una mayor eficiencia
-                //utilizaremos la función var_export
-                    $fileContent .= " '{$clave}' => Array (" . var_export($valor) . "), \n";
+                        //en este caso todos los elementos que encontramos son un array de arrays así que para una mayor eficiencia
+                        //utilizaremos la función var_export
+                        $fileContent .= " '{$clave}' => Array (" . var_export($valor) . "), \n";
                     }
-         }
+                }
                     $fileContent .= $string . "\n";
             }
-           else
+           /*else
            {
-                   $fileContent .= $string . "\n";
-           }
-            }
+                   $fileContent .= "{$isArrayLong} - " . $string . "\n";
+            }*/
                
         }
     //Creamos el fichero php correspondiente
