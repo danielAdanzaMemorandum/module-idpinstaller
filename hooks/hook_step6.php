@@ -45,9 +45,9 @@
 //Para dudas sobre el código: daniel.adanza@externos.rediris.com
 //Hecho en Mayo / 2018
 //Función para sobrescribir el authsources tomando como modelo el registrado en config-templates/authources.php
+
 function overwriteAuthsources ($config, $filename)
 {
-
     echo "se ha entrado en la función authsources <br/>";
 
         $file = __DIR__ . '/../../../config-templates/authsources.php';
@@ -115,7 +115,7 @@ function overwriteAuthsources ($config, $filename)
                             //lo que hay antes lo dejamos intacto por ejemplo en el caso
                             //'Nombre del atributo' => array('array','con muchas','cosas');
                             //quedaría así 'Nombre del atributo' => array(
-                            $fileContent .= $splitedString[0] . "array(";
+                            $fileContent .= $splitedString[0];
                             //a continuación comprobamos si es un array multilinea o si acaba en la misma linea
                             if ( strpos ( $string, ")," ) !== false )
                             {
@@ -131,15 +131,13 @@ function overwriteAuthsources ($config, $filename)
                             {
                                 if ( strcmp($valor[0],"Array") !== 0 )
                                 {
+                    $stringExport = var_export($valor,1);
                                     //$fileContent .= "'". implode("','",$valor) . "'";
-                                    $fileContent .= var_export($valor) . "/* Nuevo Array Insertado */";
-
-                                    echo "sobreescrito -->" . implode("','",$valor) . "<br/>";
-                                    echo "sobreescrito ->" . var_export($valor) . "<br/>";
+                                    $fileContent .= "" . $stringExport . "";
                                 }
                             }
 
-                            $fileContent .= "),\n";
+                            $fileContent .= ",\n";
                         } 
                         //una vez que hemos obtenido los datos vamos a procesarlos de manera correcta
                         //en el caso de que sea un string añadiremos comillas simples al rededor del fichero
@@ -204,23 +202,21 @@ function overwriteAuthsources ($config, $filename)
                     {
                         //en este caso todos los elementos que encontramos son un array de arrays así que para una mayor eficiencia
                         //utilizaremos la función var_export
-                        $fileContent .= " '{$clave}' => Array (" . var_export($valor) . "), \n";
+                        $fileContent .= " '{$clave}' => " . var_export($valor,1) . ", \n";
                     }
                 }
                     $fileContent .= $string . "\n";
             }
-           /*else
-           {
-                   $fileContent .= "{$isArrayLong} - " . $string . "\n";
-            }*/
                
         }
-    //Creamos el fichero php correspondiente
+        //Creamos el fichero php correspondiente
         return @file_put_contents($filename, $fileContent);
 }
+
 ////////////////////////////////////////////////////////////////
 //  Fin del nuevo código
 ////////////////////////////////////////////////////////////////
+
 
 function idpinstaller_hook_step6(&$data) {
     $data['datasources'] = getDataSources();
