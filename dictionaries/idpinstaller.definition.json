@@ -95,8 +95,11 @@
     "step2_access_title": {
         "es": "2.1 Datos de acceso a SimpleSAMLphp"
     },
+    "step2_access_generate": {
+        "es": "Generar contraseña segura"
+    },
     "step2_access_password": {
-        "es": "Introduzca la contraseña de la herramienta de administración de SimpleSAMLphp:"
+        "es": "Introduzca la contraseña de la herramienta de administración de SimpleSAMLphp o genere una contraseña segura:"
     },
     "step2_access_password2": {
         "es": "Introduzca de nuevo su contraseña:"

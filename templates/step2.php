@@ -45,6 +45,8 @@ if (count($this->data['sir']['errors']) > 0) {
     <h4><?php echo $this->t('{idpinstaller:idpinstaller:step2_access_title}'); ?></h4>
     <input type="hidden" name="step" value="<?php echo $next_step; ?>">
     <?php echo $this->t('{idpinstaller:idpinstaller:step2_access_password}'); ?><br/>
+    <button type="button" onclick="createSecurePassword()"> <?php echo $this->t('{idpinstaller:idpinstaller:step2_access_generate}'); ?>  </button>
+    <br/><br/>
     <input type="password" value="" name="ssphp_password" style="width:200px;"><br/>
     <?php echo $this->t('{idpinstaller:idpinstaller:step2_access_password2}'); ?><br/>
     <input type="password" value="" name="ssphp_password2" style="width:200px;"><br/>
@@ -66,3 +68,73 @@ if (count($this->data['sir']['errors']) > 0) {
 
     <br/><input type="submit" value="<?php echo $button_msg; ?>"></input>
 </form>
+
+<script>
+
+//////////////////////////////////////////////////////////////////////////
+// CREADO POR Daniel Adanza en Junio del 2018
+// Para dudas sobre el código contactar con daniel.adanza@externos.rediris.es
+//////////////////////////////////////////////////////////////////////////
+
+function createSecurePassword() 
+{
+   //declaramos las strings que contendrán todos los posibles carácteres que se escojerán de manera aleatoria
+   var specials = '!@#$%^&*-+?';
+   var lowercase = 'abcdefghijklmnopqrstuvwxyz';
+   var uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+   var numbers = '0123456789';
+
+   //se incluirá en la variable final lowercase 2 veces para que sea más probable que la contraseña sea una palabra
+   //con minúsculas pero que al mismo tiempo contenga un poco de todo
+   var all = specials + lowercase + lowercase + uppercase + numbers;
+   
+   //esta función te escojerá aleatoriamente un carácter de todo lo ubicado en all
+   String.prototype.pick = function(min, max) {
+    var n, chars = '';
+
+    if (typeof max === 'undefined') 
+    {
+        n = min;
+    } 
+    else 
+    {
+        n = min + Math.floor(Math.random() * (max - min));
+    }
+
+    for (var i = 0; i < n; i++) 
+    {
+        chars += this.charAt(Math.floor(Math.random() * this.length));
+    }
+
+      return chars;
+   };
+
+   //esta función reordenará de manera aleatoria los carácteres del string
+   String.prototype.shuffle = function() 
+   {
+      var array = this.split('');
+      var tmp, current, top = array.length;
+
+      if (top) while (--top) 
+      {
+        current = Math.floor(Math.random() * (top + 1));
+        tmp = array[current];
+        array[current] = array[top];
+        array[top] = tmp;
+      }
+
+      return array.join('');
+   };
+
+   //se crea la contraseña que contenga al menos un caracter especial, minusculas y mayúsculas
+   var password = (specials.pick(1) + lowercase.pick(1) + uppercase.pick(1) + all.pick(3, 10)).shuffle();
+   //de momento se muestra por pantalla simplemente aunque la idea es de integrarla en el código del proyecto en el futuro
+   alert(password);
+}
+///////////////////////////////////////////////////////////////////
+// Fin del nuevo código
+///////////////////////////////////////////////////////////////////
+
+</script>
+
+
