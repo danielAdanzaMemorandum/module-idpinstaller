@@ -47,9 +47,9 @@ if (count($this->data['sir']['errors']) > 0) {
     <?php echo $this->t('{idpinstaller:idpinstaller:step2_access_password}'); ?><br/>
     <button type="button" onclick="createSecurePassword()"> <?php echo $this->t('{idpinstaller:idpinstaller:step2_access_generate}'); ?>  </button>
     <br/><br/>
-    <input type="password" value="" name="ssphp_password" style="width:200px;"><br/>
+    <input id="password1" type="password" value="" name="ssphp_password" style="width:200px;"><br/>
     <?php echo $this->t('{idpinstaller:idpinstaller:step2_access_password2}'); ?><br/>
-    <input type="password" value="" name="ssphp_password2" style="width:200px;"><br/>
+    <input id="password2" type="password" value="" name="ssphp_password2" style="width:200px;"><br/>
 
     <h4><?php echo $this->t('{idpinstaller:idpinstaller:step2_contact_title}'); ?></h4>
     <?php echo $this->t('{idpinstaller:idpinstaller:step2_contact_name}'); ?>:<br/>
@@ -128,13 +128,17 @@ function createSecurePassword()
 
    //se crea la contraseña que contenga al menos un caracter especial, minusculas y mayúsculas
    var password = (specials.pick(1) + lowercase.pick(1) + uppercase.pick(1) + all.pick(3, 10)).shuffle();
-   //de momento se muestra por pantalla simplemente aunque la idea es de integrarla en el código del proyecto en el futuro
-   alert(password);
+   
+   //una vez que ya hemos generado la contraseña la mostraremos en el formulario
+   //de tal manera que sea visible para el usuario
+   document.getElementById("password1").value = password;
+   document.getElementById("password2").value = password;
+
+   document.getElementById("password1").type = "text";
+   document.getElementById("password2").type = "text"; 
 }
 ///////////////////////////////////////////////////////////////////
 // Fin del nuevo código
 ///////////////////////////////////////////////////////////////////
 
 </script>
-
-
