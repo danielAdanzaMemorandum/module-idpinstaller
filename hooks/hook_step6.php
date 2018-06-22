@@ -227,6 +227,7 @@ function idpinstaller_hook_step6(&$data) {
                     array_key_exists('ldap_port', $_REQUEST) && !empty($_REQUEST['ldap_port']) &&
                     array_key_exists('ldap_enable_tls', $_REQUEST) && array_key_exists('ldap_referral', $_REQUEST)) {
                 $res = ldap_connect($_REQUEST['ldap_hostname'], $_REQUEST['ldap_port']);
+                //para mejorarlo podríamos hacer:  or die("Could not connect to {$_REQUEST['ldap_hostname']}");
                 ldap_set_option($res, LDAP_OPT_PROTOCOL_VERSION,3);     
                 if( !empty($_REQUEST['ldap_anonymous_bind']) && $_REQUEST['ldap_anonymous_bind'] != '0'){
                     $res = @ldap_bind($res); //anonymous bind
@@ -281,6 +282,9 @@ function idpinstaller_hook_step6(&$data) {
                 $password = isset($_REQUEST['pdo_password']) ? $_REQUEST['pdo_password'] : "";
                 try {
                     $res = new PDO($dsn, $username, $password);
+
+                    // cambiamos el modo de error del PDO  a excepción
+                    $res->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 } catch (PDOException $e) {
                     $res = false;
                 }
